@@ -1,0 +1,118 @@
+from pyfiglet import Figlet
+import time
+import socket
+import platform
+import requests
+
+
+username = input("Enter your username: ")
+print("Welcome, " + username)
+
+# Replace 'YOUR_API_KEY' with the API key you obtain from ipstack
+IPSTACK_API_KEY = 'YOUR_API_KEY'
+
+def get_ip_addresses():
+    # Get both IPv4 and IPv6 addresses
+    ipv4_address = socket.gethostbyname(socket.gethostname())
+    ipv6_address = socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET6)[0][4][0]
+    return ipv4_address, ipv6_address
+
+def get_external_ip_address():
+    response = requests.get("https://api64.ipify.org?format=json")
+    data = response.json()
+    return data['ip']
+
+def get_location_info(ip_address):
+    url = f"http://api.ipstack.com/{ip_address}?access_key={IPSTACK_API_KEY}"
+    response = requests.get(url)
+    location_data = response.json()
+    return location_data
+
+def get_os_info():
+    system_info = platform.uname()
+    print("Operating System: " + system_info.system)
+    print("Node Name: " + system_info.node)
+    print("Release: " + system_info.release)
+    print("Version: " + system_info.version)
+    print("Machine: " + system_info.machine)
+    print("Processor: " + system_info.processor)
+
+def option1_page():
+    print("Welcome to GetIP page.")
+    ipv4, ipv6 = get_ip_addresses()
+    print("Your IPv4 address:", ipv4)
+    print("Your IPv6 address:", ipv6)
+    time.sleep(2)
+
+def option2_page():
+    print("Welcome to GetADDRESS page.")
+    external_address = get_external_ip_address()
+    location_info = get_location_info(external_address)
+
+    print("Your external IP address is:", external_address)
+    print("Your country is:", location_info.get('country_name'))
+    print("Your city is:", location_info.get('city'))
+    print("Your street is:", location_info.get('street'))
+    print("Your postal code is:", location_info.get('zip'))
+    time.sleep(2)
+
+def option3_page():
+    print("Welcome to Get OS Info page.")
+    get_os_info()
+    time.sleep(2)
+
+def option4_page():
+    print("Welcome to Get Specific IP Info page.")
+    specific_ip = input("Enter the specific IP address: ")
+    location_info = get_location_info(specific_ip)
+
+    print(f"Information for IP address {specific_ip}:")
+    print("Country:", location_info.get('country_name'))
+    print("City:", location_info.get('city'))
+    print("Street:", location_info.get('street'))
+    print("Postal Code:", location_info.get('zip'))
+    time.sleep(2)
+
+def option5_page():
+    print("Welcome to YetAnotherOption page.")
+    # Add functionality for YetAnotherOption
+    print("YetAnotherOption selected")
+    time.sleep(2)
+
+print("")
+
+def create_cool_text(message, font="standard"):
+    fig = Figlet(font=font)
+    cool_text = fig.renderText(message)
+    return cool_text        
+
+message = "ZRAT"
+cool_text = create_cool_text(message, font="block")
+print(cool_text)
+
+def main_menu():
+    print("    === Main Menu ===")
+    print("")
+    print("[1] GetIP")
+    print("[2] GetADDRESS (External IP)")
+    print("[3] Get OS Info")
+    print("[4] Get Specific IP Info")
+    print("[5] Under Construction")
+
+# Main loop
+while True:
+    main_menu()
+    choice = input("")
+
+    if choice == "1":
+        option1_page()
+    elif choice == "2":
+        option2_page()
+    elif choice == "3":
+        option3_page()
+    elif choice == "4":
+        option4_page()
+    elif choice == "5":
+        option5_page()
+    else:
+        print("Invalid choice. Please enter a valid option.")
